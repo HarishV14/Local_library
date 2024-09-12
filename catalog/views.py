@@ -1,8 +1,13 @@
 from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import generic
 
 # Create your views here.
 from .models import Book, Author, BookInstance, Genre
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import PermissionRequiredMixin,LoginRequiredMixin
+@login_required
 def index(request):
     """View function for home page of site."""
 
@@ -38,9 +43,8 @@ def index(request):
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
 
-from django.views import generic
 
-class BookListView(generic.ListView):
+class BookListView(LoginRequiredMixin,generic.ListView):
     model = Book
     paginate_by = 2 #it displays the 2 data only in the page
 
@@ -55,9 +59,9 @@ class BookListView(generic.ListView):
         # context['some_data'] = 'This is just some data'
         # return context
 
-from django.shortcuts import get_object_or_404
 
-class BookDetailView(generic.DetailView):
+
+class BookDetailView(LoginRequiredMixin,generic.DetailView):
     model=Book
 
     #this can use when we are not using generic view because automatically it takes 
@@ -65,10 +69,32 @@ class BookDetailView(generic.DetailView):
     #     book = get_object_or_404(Book, pk=primary_key)
     #     return render(request, 'catalog/book_detail.html', context={'book': book})
 
-class AuthorListView(generic.ListView):
+class AuthorListView(LoginRequiredMixin,generic.ListView):
     model=Author
     paginate_by = 2 #it displays the 2 data only in the page
 
 class AuthorDetailView(generic.DetailView):
     model=Author
     
+
+class LoanedBooksByUserListView(LoginRequiredMixin,generic.ListView):
+    """Generic class-based view listing books on loan to current user."""
+    model = BookInstance
+    template_name = 'catalog/bookinstance_list_borrowed_user.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return (
+            BookInstance.objects.filter(borrower=self.request.user) #it mention current user
+            .filter(status__exact='o')
+            .order_by('due_back')
+        )
+
+class BookBoorowedByLibrarian(PermissionRequiredMixin,generic.ListView):
+    model="bookInstance"
+    template_name = 'catalog/book_staff_borrow.html'
+    permission_required=('catalog.can_mark_returned')
+
+    def get_queryset(self):
+        return BookInstance.objects.filter(status__exact = 'o').order_by('due_back')
+    pass
