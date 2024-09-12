@@ -26,7 +26,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('catalog/', include('catalog.urls')),
-
+    path('accounts/',include('django.contrib.auth.urls')),
     #it redirect the empty url is to catalog while start application it redirects to the catalog/ urls
     path('', RedirectView.as_view(url='catalog/', permanent=True)), #this redirect the base url to our application
 
