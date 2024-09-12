@@ -1,20 +1,17 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Book List</h1>
-  {% if book_list %}
+  <h1>Author List</h1>
+  {% if author_list %}
     <ul>
-      {% for book in book_list %}
+      {% for author in author_list %}
       <li>
-        <!-- Access using model method were decalared in model -->
-        <!-- <a href="{{ book.get_absolute_url }}">{{ book.title }}</a> -->
-        <a href="{% url 'book-detail' book.pk %}">{{ book.title }}</a>
-        ({{book.author}})
+        <a href="{% url 'author-detail' author.pk %}">{{ author.first_name }},{{ author.last_name }} ({{ author.date_of_birth }})</a>
       </li>
       {% endfor %}
     </ul>
   {% else %}
-    <p>There are no books in the library.</p>
+    <p>There are no authors in the library.</p>
   {% endif %}
   {% block pagination %}
     {% if is_paginated %}
