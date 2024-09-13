@@ -30,9 +30,9 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-k32#a8impc-+%+
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
+DEBUG = True
 
-ALLOWED_HOSTS = ['harish14.pythonanywhere.com', '127.0.0.1']
+ALLOWED_HOSTS = ['harish14.pythonanywhere.com', '127.0.0.1','localhost']
 
 
 # Application definition
